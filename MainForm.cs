@@ -290,6 +290,8 @@ namespace VideoGameMusicDownloader
                 };
 
                 // deactivate form and start
+                TaskbarUtils.SetProgressState(Handle, TaskbarUtils.ProgressState.Normal);
+                TaskbarUtils.SetProgressValue(Handle, 0, (ulong)CurrentAlbum.SizeInBytes);
                 SetFormEnabled(false);
                 StartDownload();
             }
@@ -316,6 +318,9 @@ namespace VideoGameMusicDownloader
                 ProgressOverallValueLabel.Text = ProgressTrackValueLabel.Text = "100 %";
                 ProgressOverallProgressBar.Value = ProgressTrackProgressBar.Value = 100;
                 SetFormEnabled(true);
+
+                TaskbarUtils.SetProgressState(Handle, TaskbarUtils.ProgressState.NoProgress);
+                TaskbarUtils.Flash(Handle);
             }
         }
 
@@ -335,18 +340,24 @@ namespace VideoGameMusicDownloader
             var trackProgress = Math.Min(100, (int)(DownloadData.TrackBytes * 1.0f / trackTotal * 100));
             ProgressTrackProgressBar.Value = trackProgress;
             ProgressTrackValueLabel.Text = string.Format("{0} % of {1}", trackProgress, DownloadData.CurrentTrack.Title);
+
+            TaskbarUtils.SetProgressValue(Handle, (ulong)DownloadData.AlbumBytes, (ulong)CurrentAlbum.SizeInBytes);
         }
 
         void TrackDownloadClient_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
         {
             if ( e.Cancelled )
             {
+                TaskbarUtils.SetProgressState(Handle, TaskbarUtils.ProgressState.NoProgress);
                 SetFormEnabled(true);
                 SetDataGridRowColor(Color.LightCoral, null, DownloadData.CurrentTrack.Title);
             }
             else if ( e.Error != null )
             {
+                TaskbarUtils.SetProgressState(Handle, TaskbarUtils.ProgressState.Error);
+                TaskbarUtils.Flash(Handle);
                 ShowEx("Failed to download track", e.Error);
+                TaskbarUtils.SetProgressState(Handle, TaskbarUtils.ProgressState.NoProgress);
                 SetFormEnabled(true);
             }
             else
