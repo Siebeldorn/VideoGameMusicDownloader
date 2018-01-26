@@ -441,17 +441,37 @@ namespace VideoGameMusicDownloader
             try
             {
                 var filepath = BuildConfigPath();
-                if(File.Exists(filepath))
+                if ( File.Exists(filepath) )
                 {
                     var ser = new DataContractJsonSerializer(typeof(Configuration));
-                    using(var file = File.Open(filepath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using ( var file = File.Open(filepath, FileMode.Open, FileAccess.Read, FileShare.Read) )
                         Config = ser.ReadObject(file) as Configuration;
                 }
             }
-            finally
+            catch ( Exception ex )
             {
-                if ( Config == null )
-                    Config = new Configuration(System.Environment.CurrentDirectory, true);
+                MessageBox.Show("Failed to load configuration from file:\n\n" + ex.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            if ( Config == null )
+            {
+                string musicFolder;
+                try
+                {
+                    musicFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyMusic, Environment.SpecialFolderOption.Create);
+                }
+                catch
+                {
+                    musicFolder = System.Environment.CurrentDirectory;
+                }
+
+                if ( !string.IsNullOrWhiteSpace(musicFolder) )
+                {
+                    musicFolder = Path.Combine(musicFolder, "Video Game Music");
+                    if ( !Directory.Exists(musicFolder) )
+                        Directory.CreateDirectory(musicFolder);
+                }
+                Config = new Configuration(musicFolder, true);
             }
 
             DownloadLocationTextBox.Text = Config.DownloadLocation;
