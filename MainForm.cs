@@ -97,6 +97,7 @@ namespace VideoGameMusicDownloader
 
                 var matches = TrackRegex.Matches(CurrentAlbum.Source);
                 var dataIndex = 0;
+                var dataCountPerTrack = matches.Count >= 4 && matches[3].Groups["data"].Value.ToLowerInvariant().EndsWith("mb") ? 4 : 3;
                 foreach ( Match trackMatch in matches )
                 {
                     if ( trackMatch.Success )
@@ -115,10 +116,13 @@ namespace VideoGameMusicDownloader
                             case 2:
                                 CurrentAlbum.Tracks.LastOrDefault().SizeInBytes = MbStringToBytes(data);
                                 break;
+                            default:
+                                // ignore additional data
+                                break;
 
                         }
                     }
-                    dataIndex = (dataIndex + 1) % 3;
+                    dataIndex = (dataIndex + 1) % dataCountPerTrack;
                 }
 
                 var number = 1;
