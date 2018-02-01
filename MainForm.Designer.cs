@@ -83,6 +83,9 @@
             this.AlbumAddressTextBox.Name = "AlbumAddressTextBox";
             this.AlbumAddressTextBox.Size = new System.Drawing.Size(390, 20);
             this.AlbumAddressTextBox.TabIndex = 1;
+            this.AlbumAddressTextBox.TextChanged += new System.EventHandler(this.AlbumAddressTextBox_TextChanged);
+            this.AlbumAddressTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.AlbumAddressTextBox_KeyDown);
+            this.AlbumAddressTextBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.AlbumAddressTextBox_MouseDoubleClick);
             // 
             // AlbumDownloadInformationButton
             // 

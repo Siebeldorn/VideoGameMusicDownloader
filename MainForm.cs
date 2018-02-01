@@ -29,8 +29,8 @@ namespace VideoGameMusicDownloader
 
             TracksListDataGridView.Font = new Font("Consolas", 8.0f, FontStyle.Regular);
             TracksListDataGridView.Columns.AddRange(
-                new DataGridViewColumn[] 
-                {  
+                new DataGridViewColumn[]
+                {
                     new DataGridViewTextBoxColumn() { Name = "columnNumber", HeaderText = "#", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader },
                     new DataGridViewTextBoxColumn() { Name = "columnTitle", HeaderText = "Title", AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill },
                     new DataGridViewTextBoxColumn() { Name = "columnDuration", HeaderText = "Duration", AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCellsExceptHeader },
@@ -70,6 +70,26 @@ namespace VideoGameMusicDownloader
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
             SaveConfig();
+        }
+
+        private void AlbumAddressTextBox_TextChanged(object sender, EventArgs e)
+        {
+            DownloadGropuBox.Enabled = AlbumAddressTextBox.Text == LastAlbumAddress;
+        }
+
+        private void AlbumAddressTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ( e.KeyCode == Keys.Enter )
+            {
+                e.Handled = true;
+                AlbumDownloadInformationButton.PerformClick();
+            }
+        }
+
+        private void AlbumAddressTextBox_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if ( e.Button == MouseButtons.Left )
+                AlbumAddressTextBox.SelectAll();
         }
 
         private void AlbumDownloadInformationButton_Click(object sender, EventArgs e)
@@ -132,6 +152,7 @@ namespace VideoGameMusicDownloader
                     number++;
                 }
 
+                LastAlbumAddress = AlbumAddressTextBox.Text;
                 DownloadGropuBox.Enabled = ProgressGroupBox.Enabled = true;
             }
             catch ( Exception ex )
@@ -216,6 +237,8 @@ namespace VideoGameMusicDownloader
 
             return null;
         }
+
+        string LastAlbumAddress = "";
 
         private Album CurrentAlbum;
 
